@@ -5,17 +5,19 @@ import sharp from "sharp";
 const app = express();
 app.use(bodyParser.json({ limit: "25mb" }));
 
-// Route: Convert image to RGBA PNG
+// ✅ Health check route
+app.get("/", (req, res) => {
+  res.send("✅ RGBA Converter API is running!");
+});
+
+// ✅ Convert image to RGBA PNG
 app.post("/convert", async (req, res) => {
   try {
     const { imageBase64 } = req.body;
     if (!imageBase64) return res.status(400).send("Missing imageBase64");
 
     const buffer = Buffer.from(imageBase64, "base64");
-    const rgbaBuffer = await sharp(buffer)
-      .ensureAlpha()
-      .png()
-      .toBuffer();
+    const rgbaBuffer = await sharp(buffer).ensureAlpha().png().toBuffer();
 
     res.json({
       success: true,
